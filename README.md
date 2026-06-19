@@ -1,1 +1,0 @@
-# aidlc-team1
