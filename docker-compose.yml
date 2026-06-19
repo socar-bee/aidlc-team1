@@ -1,0 +1,108 @@
+# ============================================================
+# 테이블오더 — 프로덕션(로컬 단일 머신) 스택
+# 사용: cp .env.example .env  →  docker compose up -d --build
+# 종료: docker compose down   (데이터 삭제: docker compose down -v)
+# ============================================================
+
+networks:
+  table-order-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  image-uploads:
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: to-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${TZ:-Asia/Seoul}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"          # 디버깅용 — 운영 전환 시 제거 권장
+    networks: [table-order-net]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: to-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ADMIN_EXPIRES_IN: 16h
+      TABLE_TOKEN_EXPIRES_IN: 90d
+      IMAGE_UPLOAD_DIR: /var/lib/uploads
+      STATIC_BASE_URL: http://localhost:4000
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001
+      TZ: ${TZ:-Asia/Seoul}
+    volumes:
+      - image-uploads:/var/lib/uploads
+    ports:
+      - "4000:4000"
+    networks: [table-order-net]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:4000/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  customer-fe:
+    build:
+      context: .
+      dockerfile: apps/customer-fe/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+    container_name: to-customer-fe
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      TZ: ${TZ:-Asia/Seoul}
+    ports:
+      - "3000:3000"
+    networks: [table-order-net]
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  admin-fe:
+    build:
+      context: .
+      dockerfile: apps/admin-fe/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+    container_name: to-admin-fe
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      TZ: ${TZ:-Asia/Seoul}
+    ports:
+      - "3001:3001"
+    networks: [table-order-net]
+    depends_on:
+      backend:
+        condition: service_healthy

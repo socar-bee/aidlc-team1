@@ -1,0 +1,35 @@
+{
+  "name": "table-order",
+  "version": "0.1.0",
+  "private": true,
+  "description": "테이블오더 서비스 - 모노레포 루트",
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check",
+    "dev:backend": "pnpm --filter @table-order/backend start:dev",
+    "dev:customer": "pnpm --filter @table-order/customer-fe dev",
+    "dev:admin": "pnpm --filter @table-order/admin-fe dev",
+    "migration:run": "pnpm --filter @table-order/backend migration:run",
+    "migration:revert": "pnpm --filter @table-order/backend migration:revert",
+    "seed": "pnpm --filter @table-order/backend seed",
+    "test": "pnpm -r test",
+    "test:e2e": "playwright test",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d",
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:reset": "docker compose -f docker-compose.dev.yml down -v",
+    "stack:up": "docker compose up -d --build",
+    "stack:down": "docker compose down",
+    "stack:reset": "docker compose down -v"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "prettier": "^3.2.5",
+    "@playwright/test": "^1.44.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

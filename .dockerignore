@@ -1,0 +1,16 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+**/playwright-report
+**/test-results
+**/*.tsbuildinfo
+.git
+.env
+**/.env
+**/.env.local
+*.log
+.DS_Store
+aidlc-docs
+.aws-aidlc-rule-details

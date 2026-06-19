@@ -1,0 +1,30 @@
+# 로컬 개발용 — MySQL 컨테이너만 띄움
+# 사용: docker compose -f docker-compose.dev.yml up -d
+# 정지: docker compose -f docker-compose.dev.yml down
+# 데이터 삭제: docker compose -f docker-compose.dev.yml down -v
+
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: to-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: table_order
+      MYSQL_USER: tableorder
+      MYSQL_PASSWORD: changeme_app
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"
+    volumes:
+      - to-mysql-dev-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  to-mysql-dev-data:
