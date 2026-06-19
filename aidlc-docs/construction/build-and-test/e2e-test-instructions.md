@@ -27,9 +27,11 @@ setup(테이블 토큰) → 메뉴 카드 → 상세 모달 담기 → 장바구
 
 selector 는 FE `data-testid` 기반 (`setup-submit`, `menu-grid`, `menu-detail-add-to-cart`, `floating-cart-button`, `cart-checkout`, `checkout-confirm`, `order-success`, `order-number`).
 
-## 상태
+## 상태 — 실측 ✅
 
-> ⚠️ 본 E2E 는 **작성 완료, 이번 실행에서는 미구동** (구동 중인 스택 필요). 위 절차로 스택 기동 후 실행.
+> **구동 확인 완료** (전체 스택 + seed 실제 기동, OrbStack): **4 passed / 4** — chromium / webkit / Mobile Chrome / Mobile Safari 전 환경 골든플로우 통과 (~10s).
+>
+> 비고: webkit 모바일은 controlled-input 상태반영 레이스 회피 위해 제출 전 `await expect(submit).toBeEnabled()` 대기 추가.
 
 ## 후속 (G5 풀 커버 — 3~5 플로우)
 

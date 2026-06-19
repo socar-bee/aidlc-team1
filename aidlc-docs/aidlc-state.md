@@ -43,11 +43,12 @@
   - [x] **U7 Order History** — 현재/과거 분리(endedAt) + 세션 종료 + Customer/Admin 내역 화면 ✅
   - [x] **U8 Polling Dashboard** — 2초 폴링 대시보드 + 상태변경(비관적 락)/soft-delete + 테이블 등록 ✅ (SSE→폴링 설계 변경)
   - [x] **U9 Infra & DevX** — prod docker-compose + 3 Dockerfile + .dockerignore + root .env.example + playwright.config + backup/restore + README ✅ (SSE→폴링 정합화)
-- [x] **Build and Test** — 핵심 슬라이스 + 지침문서 ✅
-  - Unit(Jest Pure Mock): 13 passed/13 (주문합계·세션전이·인증토큰·bcrypt), backend type-check ✅
-  - Integration(Supertest+Testcontainers): Auth 로그인 대표 1 작성(Docker 필요·미구동)
-  - E2E(Playwright 4환경): Customer 골든플로우 대표 1 작성(스택 필요·미구동)
-  - 지침문서 6종 + summary, lint config 부재는 선제 이슈(범위 밖)
+- [x] **Build and Test** — 풀 스위트 확장 + 전 계층 실구동 ✅
+  - Unit(Jest Pure Mock): **28 passed/28** (auth·jwt·password / session 전이 / order 합계·상태전이·락 / category·menu·table 폴링)
+  - Integration(Supertest+Testcontainers MySQL): Auth 로그인 **2 passed/2** (실구동)
+  - E2E(Playwright 4환경): Customer 골든플로우 **4 passed/4** (전체 스택+seed 실구동)
+  - 전 패키지 type-check ✅ / lint ✅ (ESLint config 복구) / docker 스택 빌드·기동 ✅
+  - 지침문서 6종 + summary. G1~G7 충족(G7 성능은 수동 spot check 지침)
 
 ### 🟡 OPERATIONS PHASE
 - [ ] Operations (Placeholder)

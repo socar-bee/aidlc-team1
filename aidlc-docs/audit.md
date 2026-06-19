@@ -390,3 +390,17 @@ services.md guard 표 OptionalAuthGuard(admin+table)로 갱신.
 **Context**: 🟢 CONSTRUCTION 완료 — INCEPTION+CONSTRUCTION 전 단계 종료. OPERATIONS 는 placeholder.
 
 ---
+
+## Build and Test 후속 — 풀 스위트 확장 + 전 계층 실구동
+**Timestamp**: 2026-06-19T16:30:00+09:00
+**User Input**: "다진행해줘" (후속 3종: 통합·E2E 실구동 / lint 복구 / 풀 스위트 확장)
+**결과**:
+- ② lint 복구: backend .eslintrc.js(+spec override) / customer·admin .eslintrc.json(next/core-web-vitals). 미사용 import IsUrl 1건 제거. → 전체 pnpm lint 통과(backend 0·customer 0·admin 비차단 warning).
+- ③ 풀 스위트 확장: unit 13→**28**(9 suites). 신규 spec5: auth.service(로그인 200/401/매장없음) / order.status(정방향·역방향 BadRequest·타매장 Forbidden) / category(중복409·연결409·reorder400) / menu(가격포맷·카테고리없음400·findOne404) / table(buildSummaries 폴링 요약). type-check ✅.
+- ① 통합 실구동: Testcontainers 소켓 미탐지(OrbStack) → DOCKER_HOST=unix://~/.orbstack/run/docker.sock 주입 → auth.integration **2 passed/2** (실제 MySQL 8.4).
+- ① E2E 실구동: docker compose up --build로 4이미지 빌드+기동(mysql·backend healthy) → migration:run + seed(컨테이너 내) → playwright install chromium/webkit → e2e **4 passed/4**(chromium·webkit·Mobile Chrome·Mobile Safari). Mobile Safari 레이스는 제출 전 toBeEnabled() 대기로 해결.
+- 최종 검증: type-check 4패키지 ✅ / lint 전체 ✅ / unit 28/28 / integration 2/2 / e2e 4/4. G1~G7 충족.
+검증 스택은 verification 용도로 기동했으며 정리(down)함. dev mysql(to-mysql-dev)은 기존 유지.
+**Context**: 🟢 CONSTRUCTION 완전 종료(전 계층 실측 그린). OPERATIONS placeholder.
+
+---

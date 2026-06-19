@@ -10,6 +10,14 @@
 pnpm --filter @table-order/backend test:integration
 ```
 
+> **OrbStack/비표준 소켓 사용 시**: Testcontainers 가 Docker 소켓을 못 찾으면 `DOCKER_HOST` 를 명시한다.
+> ```bash
+> export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"   # orbstack 예시
+> export TESTCONTAINERS_RYUK_DISABLED=true
+> pnpm --filter @table-order/backend test:integration
+> ```
+> (`docker context inspect` 로 실제 소켓 경로 확인)
+
 ## 작성된 시나리오 (대표 1)
 
 ### `auth.integration-spec.ts` — 관리자 로그인 플로우
@@ -20,9 +28,9 @@ pnpm --filter @table-order/backend test:integration
   2. 잘못된 비밀번호 → **401**
 - **Cleanup**: 앱 close + 컨테이너 stop (afterAll)
 
-## 상태
+## 상태 — 실측 ✅
 
-> ⚠️ 본 통합 테스트는 **작성 완료, 이번 실행에서는 미구동** (Testcontainers MySQL 이미지 pull + 부트가 환경 의존). Docker 데몬이 있는 환경에서 위 명령으로 실행.
+> **구동 확인 완료** (Testcontainers MySQL 8.4 실제 기동): **Test Suites 1 passed, Tests 2 passed** (로그인 200 / 오답 401). 소요 ~12s.
 
 ## 후속 (풀 스위트 확장 시)
 

@@ -20,6 +20,8 @@ test('고객이 메뉴를 담아 주문하면 주문번호가 발급된다', asy
   await page.getByTestId('setup-admin-password').fill('admin1234');
   await page.getByTestId('setup-table-number').fill('1');
   await page.getByTestId('setup-table-password').fill('table1234');
+  // 5개 필드가 모두 채워져 폼이 ready 가 될 때까지 대기 후 제출 (webkit 모바일 상태반영 레이스 방지)
+  await expect(page.getByTestId('setup-submit')).toBeEnabled();
   await page.getByTestId('setup-submit').click();
 
   // 2) 메뉴 화면 — 첫 메뉴 카드 클릭 → 상세 모달 → 담기
